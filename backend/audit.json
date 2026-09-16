@@ -1,0 +1,101 @@
+[
+  {
+    "id": "audit-1789573449125-hmcuo",
+    "timestamp": "2026-09-16T15:44:09.125Z",
+    "ip": "192.168.1.101",
+    "paperId": "paper-demo-1789573449123",
+    "centerId": "center-delhi-01",
+    "action": "KEY_RELEASE_ATTEMPT",
+    "status": "FORBIDDEN_RELEASE_TIME_NOT_MET",
+    "statusCode": 403,
+    "details": "Attempted access before scheduled release time"
+  },
+  {
+    "id": "audit-1789573449125-8pb60",
+    "timestamp": "2026-09-16T15:44:09.125Z",
+    "ip": "203.0.113.42",
+    "paperId": "paper-demo-1789573449123",
+    "centerId": "unauthorized-hacker-center",
+    "action": "KEY_RELEASE_ATTEMPT",
+    "status": "UNAUTHORIZED_CENTER",
+    "statusCode": 403,
+    "details": "Rogue center attempted unauthorized access"
+  },
+  {
+    "id": "audit-1789573449125-l2kw0",
+    "timestamp": "2026-09-16T15:44:09.125Z",
+    "ip": "192.168.1.101",
+    "paperId": "paper-demo-1789573449123",
+    "centerId": "center-delhi-01",
+    "action": "KEY_RELEASE_ATTEMPT",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "Key released following verified release timestamp"
+  },
+  {
+    "id": "audit-1789578117161-8y7v0",
+    "timestamp": "2026-09-16T17:01:57.161Z",
+    "ip": "::1",
+    "paperId": "paper-1789578117157-4b853ecd",
+    "centerId": "ADMIN",
+    "action": "PAPER_UPLOAD_AND_ENCRYPT",
+    "status": "SUCCESS",
+    "statusCode": 201,
+    "details": "File \"exam_cs101.txt\" encrypted. Wrapped for 3 centers."
+  },
+  {
+    "id": "audit-1789578117183-7jys2",
+    "timestamp": "2026-09-16T17:01:57.183Z",
+    "ip": "::1",
+    "paperId": "paper-1789578117157-4b853ecd",
+    "centerId": "center-delhi-01",
+    "action": "KEY_RELEASE_ATTEMPT",
+    "status": "FORBIDDEN_RELEASE_TIME_NOT_MET",
+    "statusCode": 403,
+    "details": "GET /api/paper/paper-1789578117157-4b853ecd/release-key?centerId=center-delhi-01"
+  },
+  {
+    "id": "audit-1789578117208-ajaq2",
+    "timestamp": "2026-09-16T17:01:57.208Z",
+    "ip": "::1",
+    "paperId": "paper-1789578117157-4b853ecd",
+    "centerId": "center-delhi-01",
+    "action": "KEY_RELEASE_ATTEMPT",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/paper-1789578117157-4b853ecd/release-key?centerId=center-delhi-01"
+  },
+  {
+    "id": "audit-1789578117219-hb80z",
+    "timestamp": "2026-09-16T17:01:57.219Z",
+    "ip": "::1",
+    "paperId": "paper-1789578117157-4b853ecd",
+    "centerId": "ANONYMOUS",
+    "action": "AUDIT_LOG_VIEW",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/paper-1789578117157-4b853ecd/audit-log"
+  },
+  {
+    "id": "audit-1789592200255-n0ffx",
+    "timestamp": "2026-09-16T20:56:40.255Z",
+    "ip": "::1",
+    "paperId": "all",
+    "centerId": "ANONYMOUS",
+    "action": "AUDIT_LOG_VIEW",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/all/audit-log"
+  },
+  {
+    "id": "audit-1789592200271-u4b0h",
+    "timestamp": "2026-09-16T20:56:40.271Z",
+    "ip": "::1",
+    "paperId": "all",
+    "centerId": "ANONYMOUS",
+    "action": "AUDIT_LOG_VIEW",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/all/audit-log"
+  }
+]

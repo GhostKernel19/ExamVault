@@ -1,21 +1,24 @@
 {
-  "name": "examvault-backend",
+  "name": "examvault",
   "version": "1.0.0",
-  "description": "ExamVault - Secure exam paper distribution system with cryptographic key wrapping and tamper-evident blockchain audit logging",
-  "main": "server.js",
+  "description": "ExamVault - Blockchain-Anchored Secure Examination Paper Distribution System",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "npm --prefix backend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "node scripts/testServer.js",
     "demo": "node scripts/demo.js",
-    "test": "node scripts/demo.js"
+    "test": "node scripts/demo.js && node scripts/testServer.js"
   },
   "keywords": [
     "examvault",
     "blockchain",
     "encryption",
-    "aes-256",
+    "aes-256-gcm",
     "rsa-oaep",
-    "key-wrapping"
+    "ethereum",
+    "sepolia"
   ],
   "author": "",
   "license": "ISC",

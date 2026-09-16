@@ -1,15 +1,21 @@
 # Node modules
 node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Build artifacts
+frontend/dist/
+dist/
 
 # Environment variables
 .env
+backend/.env
 
-# Uploads directory - store files locally during processing
+# Uploads directory - store encrypted files locally during processing
+backend/uploads/*
+!backend/uploads/.gitkeep
 uploads/*
 !uploads/.gitkeep
-
-# Audit trail file (optional, can be retained locally)
-# audit.json
 
 # Keys and secrets
 *.pem

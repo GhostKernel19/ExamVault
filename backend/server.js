@@ -12,9 +12,9 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 
-const paperRoutes = require('./src/routes/paper');
-const logger = require('./src/utils/logger');
-const { getPublicCenters } = require('./src/utils/mockCenters');
+const paperRoutes = require('./routes/paper');
+const logger = require('./utils/logger');
+const { getPublicCenters } = require('./utils/mockCenters');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

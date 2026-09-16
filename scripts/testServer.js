@@ -14,10 +14,10 @@
  */
 
 const http = require('http');
-const app = require('../server');
-const { unwrapKey } = require('../src/services/keyWrapping');
-const { decryptFileBuffer } = require('../src/services/encryption');
-const { getCenterPrivateKey } = require('../src/utils/mockCenters');
+const app = require('../backend/server');
+const { unwrapKey } = require('../backend/services/keyWrapping');
+const { decryptFileBuffer } = require('../backend/services/encryption');
+const { getCenterPrivateKey } = require('../backend/utils/mockCenters');
 
 const TEST_PORT = 5055;
 

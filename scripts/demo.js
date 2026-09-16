@@ -17,12 +17,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const { encryptFileBuffer, decryptFileBuffer } = require('../src/services/encryption');
-const { wrapKey, unwrapKey, wrapKeyForCenters } = require('../src/services/keyWrapping');
-const { getPublicCenters, getCenter, getCenterPrivateKey } = require('../src/utils/mockCenters');
-const { checkReleaseTime, setPaperReleaseTime } = require('../src/services/contractService');
-const { getAuditLogs, logAuditEvent } = require('../src/middlewares/auditLogger');
-const { savePaper, getPaper } = require('../src/services/paperStore');
+const { encryptFileBuffer, decryptFileBuffer } = require('../backend/services/encryption');
+const { wrapKey, unwrapKey, wrapKeyForCenters } = require('../backend/services/keyWrapping');
+const { getPublicCenters, getCenter, getCenterPrivateKey } = require('../backend/utils/mockCenters');
+const { checkReleaseTime, setPaperReleaseTime } = require('../backend/services/contractService');
+const { getAuditLogs, logAuditEvent } = require('../backend/middlewares/auditLogger');
+const { savePaper, getPaper } = require('../backend/services/paperStore');
 
 console.log('\n================================================================');
 console.log('🔒 EXAMVAULT: END-TO-END CRYPTOGRAPHIC & AUDIT DEMO');
