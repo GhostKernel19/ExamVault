@@ -19,7 +19,28 @@ function getContractInstance(signerOrProvider) {
 /**
  * Registers an exam paper on-chain with its encrypted SHA-256 hash and timelock.
  */
-export async function registerPaperOnContract(signer, { paperId, paperHash, releaseTimeUnix, authorizedCenters }) {
+export async function registerPaperOnContract(signerOrOptions, maybeOptions = {}) {
+  let signer;
+  let paperId;
+  let paperHash;
+  let releaseTimeUnix;
+  let authorizedCenters;
+
+  if (signerOrOptions && typeof signerOrOptions === 'object' && !signerOrOptions.getAddress && !signerOrOptions.sendTransaction) {
+    // Called with single options object: { signer, paperId, encryptedFileHash, releaseTime, authorizedCenters }
+    signer = signerOrOptions.signer;
+    paperId = signerOrOptions.paperId;
+    paperHash = signerOrOptions.encryptedFileHash || signerOrOptions.paperHash;
+    releaseTimeUnix = signerOrOptions.releaseTime || signerOrOptions.releaseTimeUnix;
+    authorizedCenters = signerOrOptions.authorizedCenters || [];
+  } else {
+    signer = signerOrOptions;
+    paperId = maybeOptions.paperId;
+    paperHash = maybeOptions.encryptedFileHash || maybeOptions.paperHash;
+    releaseTimeUnix = maybeOptions.releaseTime || maybeOptions.releaseTimeUnix;
+    authorizedCenters = maybeOptions.authorizedCenters || [];
+  }
+
   if (signer) {
     try {
       const contract = getContractInstance(signer);
@@ -37,6 +58,7 @@ export async function registerPaperOnContract(signer, { paperId, paperHash, rele
       const receipt = await tx.wait();
       return {
         txHash: receipt.hash,
+        transactionHash: receipt.hash,
         blockNumber: receipt.blockNumber,
         isSimulated: false
       };
@@ -50,6 +72,7 @@ export async function registerPaperOnContract(signer, { paperId, paperHash, rele
   const mockTxHash = `0x${Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}`;
   return {
     txHash: mockTxHash,
+    transactionHash: mockTxHash,
     blockNumber: 5418290 + Math.floor(Math.random() * 100),
     isSimulated: true
   };

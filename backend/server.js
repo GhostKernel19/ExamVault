@@ -73,8 +73,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
-if (process.env.NODE_ENV !== 'test') {
+// Start Server only when run directly
+if (require.main === module) {
   app.listen(PORT, () => {
     logger.success(`ExamVault server running on http://localhost:${PORT}`);
     logger.info(`Ready for paper upload and tamper-evident audit logging.`);

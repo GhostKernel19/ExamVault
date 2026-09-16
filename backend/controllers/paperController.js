@@ -38,7 +38,7 @@ async function uploadPaper(req, res) {
       });
     }
 
-    const paperId = `paper-${Date.now()}-${uuidv4().substring(0, 8)}`;
+    const paperId = req.body.paperId || `paper-${Date.now()}-${uuidv4().substring(0, 8)}`;
     const originalFilename = req.file.originalname;
     const fileBuffer = req.file.buffer;
 

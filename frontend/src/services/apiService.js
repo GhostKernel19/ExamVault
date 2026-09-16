@@ -7,10 +7,22 @@
 
 const API_BASE = import.meta.env?.VITE_API_URL || '/api/paper';
 
-export async function uploadPaperToBackend(formData) {
+export async function uploadPaperToBackend(fileOrFormData, paperId, metadata = {}) {
+  let body;
+
+  if (fileOrFormData instanceof FormData) {
+    body = fileOrFormData;
+  } else {
+    body = new FormData();
+    body.append('paper', fileOrFormData);
+    if (paperId) body.append('paperId', paperId);
+    if (metadata.title) body.append('title', metadata.title);
+    if (metadata.releaseTime) body.append('releaseTime', metadata.releaseTime);
+  }
+
   const response = await fetch(`${API_BASE}/upload`, {
     method: 'POST',
-    body: formData
+    body
   });
 
   const data = await response.json();
