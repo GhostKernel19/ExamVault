@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Uploads directory - store files locally during processing
+uploads/*
+!uploads/.gitkeep
+
+# Audit trail file (optional, can be retained locally)
+# audit.json
+
+# Keys and secrets
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
