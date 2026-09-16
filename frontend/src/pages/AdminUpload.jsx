@@ -106,7 +106,16 @@ export const AdminUpload = () => {
       setCurrentStep(1);
       setStatusMessage('Encrypting and uploading paper file to backend repository...');
       
-      const uploadResponse = await uploadPaperToBackend(file, paperId);
+      const formData = new FormData();
+      formData.append('paper', file);
+      formData.append('paperId', paperId);
+      if (subjectTitle) formData.append('title', subjectTitle);
+      formData.append('releaseTime', new Date(releaseTimestampSeconds * 1000).toISOString());
+      if (centers.length > 0) {
+        formData.append('centerIds', JSON.stringify(centers));
+      }
+
+      const uploadResponse = await uploadPaperToBackend(formData);
       const encryptedFileHash = uploadResponse.encryptedFileHash;
 
       // ------------------------------------------------------------------------
