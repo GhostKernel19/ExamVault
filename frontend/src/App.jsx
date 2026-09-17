@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { WalletProvider } from './context/WalletContext';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
+import { BeginnersGuide } from './pages/BeginnersGuide';
 import { AdminUpload } from './pages/AdminUpload';
 import { CenterAccess } from './pages/CenterAccess';
 import { AuditLog } from './pages/AuditLog';
@@ -42,6 +43,8 @@ export default function App() {
         <Routes>
           {/* Landing Page Route */}
           <Route path="/" element={<Home />} />
+          <Route path="/guide" element={<BeginnersGuide />} />
+          <Route path="/how-it-works" element={<Navigate to="/guide" replace />} />
 
           {/* Application Portal Routes */}
           <Route path="/upload" element={<AppLayout><AdminUpload /></AppLayout>} />

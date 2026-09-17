@@ -85,6 +85,7 @@ export function Home() {
             </span>
           </Link>
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+            <Link to="/guide" className="rounded-md px-3 py-2 text-xs font-medium text-blue-400 transition-colors hover:bg-white/5 hover:text-white">Beginner&apos;s Guide</Link>
             <Link to="/upload" className="rounded-md px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white">Authority Upload</Link>
             <Link to="/center" className="rounded-md px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white">Center Portal</Link>
             <Link to="/audit" className="rounded-md px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white">Audit Trail</Link>
@@ -102,6 +103,7 @@ export function Home() {
         </div>
         {menuOpen && (
           <nav className="flex flex-col gap-1 border-t border-white/[0.08] px-5 py-3 lg:hidden">
+            <Link to="/guide" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-blue-400 hover:bg-white/5">Beginner&apos;s Guide</Link>
             <Link to="/upload" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-white/5">Authority Upload</Link>
             <Link to="/center" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-white/5">Center Portal</Link>
             <Link to="/audit" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-300 hover:bg-white/5">Audit Trail</Link>
@@ -126,9 +128,9 @@ export function Home() {
               <Link to="/upload" className="group inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_28px_rgba(59,130,246,0.22)] transition-all hover:bg-blue-400 hover:shadow-[0_0_36px_rgba(59,130,246,0.35)]">
                 Go to Authority Upload <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
-              <a href="#how-it-works" className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/[0.12] bg-white/[0.03] px-5 py-3 text-sm font-semibold text-slate-200 transition-colors hover:border-white/25 hover:bg-white/[0.07]">
+              <Link to="/guide" className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/[0.12] bg-white/[0.03] px-5 py-3 text-sm font-semibold text-slate-200 transition-colors hover:border-white/25 hover:bg-white/[0.07]">
                 Learn How It Works <ArrowUpRight className="size-4" />
-              </a>
+              </Link>
             </div>
             <div className="mt-10 flex items-center gap-3 text-xs text-slate-500">
               <span className="flex -space-x-2">

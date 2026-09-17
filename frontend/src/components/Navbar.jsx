@@ -39,6 +39,13 @@ export const Navbar = () => {
             <span>Home</span>
           </Link>
           <Link
+            to="/guide"
+            className={`nav-tab-btn ${location.pathname === '/guide' ? 'active' : ''}`}
+          >
+            <KeyIcon size={16} />
+            <span>Guide</span>
+          </Link>
+          <Link
             to="/upload"
             className={`nav-tab-btn ${location.pathname === '/upload' ? 'active' : ''}`}
           >
