@@ -97,5 +97,27 @@
     "status": "SUCCESS",
     "statusCode": 200,
     "details": "GET /api/paper/all/audit-log"
+  },
+  {
+    "id": "audit-1789675217886-ucktq",
+    "timestamp": "2026-09-17T20:00:17.886Z",
+    "ip": "::1",
+    "paperId": "all",
+    "centerId": "ANONYMOUS",
+    "action": "AUDIT_LOG_VIEW",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/all/audit-log"
+  },
+  {
+    "id": "audit-1789675217898-zenmc",
+    "timestamp": "2026-09-17T20:00:17.898Z",
+    "ip": "::1",
+    "paperId": "all",
+    "centerId": "ANONYMOUS",
+    "action": "AUDIT_LOG_VIEW",
+    "status": "SUCCESS",
+    "statusCode": 200,
+    "details": "GET /api/paper/all/audit-log"
   }
 ]
