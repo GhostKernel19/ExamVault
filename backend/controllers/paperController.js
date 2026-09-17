@@ -14,7 +14,7 @@ const { wrapKeyForCenters } = require('../services/keyWrapping');
 const { checkReleaseTime, setPaperReleaseTime, getReleaseStatus } = require('../services/contractService');
 const { savePaper, getPaper, listPapers } = require('../services/paperStore');
 const { getAuditLogs, logAuditEvent } = require('../middlewares/auditLogger');
-const { getPublicCenters, getCenter } = require('../utils/mockCenters');
+const { getPublicCenters, getCenter, getOrCreateCenter } = require('../utils/mockCenters');
 
 const UPLOAD_DIR = path.resolve(process.cwd(), process.env.UPLOAD_DIR || 'uploads');
 
@@ -50,7 +50,7 @@ async function uploadPaper(req, res) {
         ? req.body.centerIds 
         : JSON.parse(req.body.centerIds);
       authorizedCenters = requestedIds
-        .map(id => getCenter(id))
+        .map(id => getOrCreateCenter(id))
         .filter(Boolean);
     }
 
@@ -167,8 +167,19 @@ async function releaseKey(req, res) {
       });
     }
 
-    // 2. Check if center is authorized
-    if (!paper.wrappedKeys || !paper.wrappedKeys[centerId]) {
+    // 2. Check if center is authorized (supports case-insensitive Ethereum addresses)
+    let wrappedKey = paper.wrappedKeys?.[centerId];
+    if (!wrappedKey && paper.wrappedKeys) {
+      const lower = centerId.toLowerCase();
+      for (const [k, v] of Object.entries(paper.wrappedKeys)) {
+        if (k.toLowerCase() === lower) {
+          wrappedKey = v;
+          break;
+        }
+      }
+    }
+
+    if (!wrappedKey) {
       return res.status(403).json({
         success: false,
         error: `Center "${centerId}" is not authorized to receive the decryption key for this paper.`
@@ -192,8 +203,6 @@ async function releaseKey(req, res) {
     }
 
     // 4. Release time reached and center authorized -> release wrapped key
-    const wrappedKey = paper.wrappedKeys[centerId];
-
     return res.status(200).json({
       success: true,
       paperId: paper.paperId,

@@ -2,14 +2,42 @@
  * ExamVault - Paper Storage Service
  * 
  * Manages paper metadata and references to encrypted files stored in /uploads.
- * In a hackathon / MVP setup, this acts as the fast in-memory & file-backed store.
+ * Automatically persists records to disk (papers.json) so papers survive server restarts.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// In-memory paper registry
+const STORE_FILE = path.resolve(process.cwd(), process.env.PAPER_STORE_FILE || 'papers.json');
+
+// In-memory paper registry backed by papers.json
 const papers = new Map();
+
+// Initialize from disk if file exists
+try {
+  if (fs.existsSync(STORE_FILE)) {
+    const raw = fs.readFileSync(STORE_FILE, 'utf8');
+    const stored = JSON.parse(raw);
+    if (Array.isArray(stored)) {
+      for (const p of stored) {
+        if (p && p.paperId) {
+          papers.set(p.paperId, p);
+        }
+      }
+    }
+  }
+} catch (err) {
+  console.warn('Could not load existing papers from disk:', err.message);
+}
+
+function persistToDisk() {
+  try {
+    const data = Array.from(papers.values());
+    fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Failed to persist paper records to disk:', err.message);
+  }
+}
 
 /**
  * Saves a new paper record.
@@ -20,10 +48,13 @@ function savePaper(paperRecord) {
     throw new Error('paperRecord must include a paperId');
   }
 
-  papers.set(paperRecord.paperId, {
+  const record = {
     ...paperRecord,
-    savedAt: new Date().toISOString()
-  });
+    savedAt: paperRecord.savedAt || new Date().toISOString()
+  };
+
+  papers.set(paperRecord.paperId, record);
+  persistToDisk();
 
   return papers.get(paperRecord.paperId);
 }

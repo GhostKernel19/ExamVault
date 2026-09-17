@@ -25,6 +25,10 @@ backend/uploads/*
 uploads/*
 !uploads/.gitkeep
 
+# Runtime databases
+papers.json
+backend/papers.json
+
 # Keys and secrets
 *.pem
 *.key
@@ -32,4 +36,3 @@ uploads/*
 # OS files
 .DS_Store
 Thumbs.db
-
