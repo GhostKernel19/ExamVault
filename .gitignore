@@ -1,6 +1,35 @@
-node_modules
+# Node modules
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Smart Contract / Hardhat
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# Build artifacts
+frontend/dist/
+dist/
+
+# Environment variables
 .env
-cache
-artifacts
-typechain
-typechain-types
+backend/.env
+frontend/.env
+*.env.local
+
+# Uploads directory - store encrypted files locally during processing
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Keys and secrets
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
+

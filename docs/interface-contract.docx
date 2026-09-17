@@ -1,0 +1,60 @@
+ExamVault — Interface Contract
+Purpose: single source of truth for the three handoff points where bugs love to hide — Backend ↔ Contract ↔ Frontend. Every teammate fills in their section with real, final values once their track is working. Update this doc, don't just talk about it — it's what integration checks against.
+
+1. Backend → Contract (encrypted file hash format)
+Backend dev fills this in:
+• Hash algorithm used: SHA-256 (confirm)
+• Format returned by /api/paper/upload: (e.g. hex string with 0x prefix, or raw hex without prefix?)
+• Example actual output: encryptedFileHash: "____________________"
+• Length of the string: _____ characters
+
+Contract dev fills this in:
+• Expected type in registerPaper(): bytes32 (confirm)
+• Does it need 0x prefix to convert cleanly from string → bytes32? Y / N
+• Any conversion step needed before calling the contract (e.g. ethers.utils.hexlify / padding)?
+
+⚠️ Known risk: SHA-256 produces a 32-byte hash — bytes32 expects exactly that, but string formatting (with/without 0x, upper/lowercase) can silently break the match. Test with one real value end-to-end before assuming this works.
+
+2. Contract → Frontend (ABI + function signatures)
+Contract dev fills this in:
+• Deployed contract address (Sepolia): ____________________
+• Final function signatures (copy exact from deployed contract):
+   - registerPaper(________________)
+   - isReleaseAllowed(________________)
+   - logAccess(________________)
+   - verifyHash(________________)
+• Where's the ABI JSON file? (path or paste location)
+
+Frontend dev fills this in:
+• Contract address used in config: ____________________ (must match above exactly)
+• ABI source used: (imported from file / pasted directly — where?)
+• Confirmed function calls match signatures above: Y / N
+
+⚠️ Known risk: if frontend's ABI is copied before the contract's final version, function names/param order can drift. Always re-copy ABI after any contract change.
+
+3. Backend → Frontend (API request/response shapes)
+Backend dev fills this in:
+Endpoint	Method	Request body/params	Response shape
+/api/paper/upload	POST	field names e.g. file, paperId, releaseTime, authorizedCenters	{ encryptedFileHash, wrappedKeys, paperId }
+/api/paper/:paperId/release-key	GET	query params e.g. centerId	success shape + 403 error shape
+/api/paper/:paperId/audit-log	GET	none / params	array shape, field names
+
+Frontend dev fills this in:
+• Confirmed form field names match backend's expected request body: Y / N
+• Confirmed response parsing matches actual backend response keys: Y / N
+• Backend base URL used in frontend config: ____________________
+
+⚠️ Known risk: field name mismatches (paperId vs paper_id, file vs paperFile) are the #1 silent failure here — test with real curl/Postman calls, not just code review.
+
+Integration Test Log
+(Integration teammate fills this in)
+Test	Status	Notes
+Upload → hash returned	☐ Pass / ☐ Fail	
+Hash anchored on-chain via registerPaper()	☐ Pass / ☐ Fail	
+Early access attempt correctly blocked	☐ Pass / ☐ Fail	
+Access after release time succeeds	☐ Pass / ☐ Fail	
+Key correctly released to authorized center only	☐ Pass / ☐ Fail	
+Audit log (on-chain event) visible in frontend	☐ Pass / ☐ Fail	
+Audit log (backend log) visible in frontend	☐ Pass / ☐ Fail	
+
+Last updated by: _____________  on  _____________

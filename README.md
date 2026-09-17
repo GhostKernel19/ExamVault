@@ -1,8 +1,31 @@
-# ExamVault 🛡️📜
+# 🛡️ ExamVault
 
-> **Secure, tamper-evident exam paper distribution using blockchain as a cryptographic anchor (not file storage).**
+> **Blockchain-Powered Secure Exam Paper Distribution & Tamper-Proof Audit System**
 
-ExamVault solves the problem of pre-exam paper leaks, unauthorized early access, and tampering by combining **off-chain encryption** (stored on IPFS, Arweave, or secure cloud storage) with **on-chain cryptographic commitments**, **role-based access control**, **time-locked authorization**, and an **unfakeable on-chain audit trail**.
+ExamVault eliminates pre-exam question paper leaks, unauthorized early access, and tampering by combining **military-grade off-chain encryption** (stored on IPFS, Arweave, or secure cloud storage) with **smart contract cryptographic timelocks**, **role-based access control**, and an **immutable on-chain audit trail**. The blockchain acts as a cryptographic anchor and verification layer (not file storage).
+
+---
+
+## 🚀 Quick Links & Specifications
+
+- 📘 **[System Architecture & Contract Interface Specification (INTEGRATION_SPEC.md)](./INTEGRATION_SPEC.md)** — **Mandatory read for Contract, Backend, and Frontend tracks!** Contains:
+  - Smart Contract ABI, structs, functions, and events (`ExamVault.sol`)
+  - Backend REST API endpoints, schemas, and payload specifications
+  - Frontend state machines, data shapes, and Web Crypto decryption pipeline
+  - "The Glue" Data Compatibility Dictionary (avoiding timestamp & hex bugs)
+  - 5-Step End-to-End Test & Simulation Procedure
+  - Hackathon Judge Defense & Pitch Guide
+
+---
+
+## 👥 Hackathon Tracks & Team Roles
+
+| Track | Owner / Focus | Core Deliverables |
+| :--- | :--- | :--- |
+| **Smart Contract** | Solidity Developer | `ExamVault.sol`, timelock logic, access control, audit events, test suite |
+| **Backend** | API / Cloud Developer | Paper upload, AES-256-GCM encryption, IPFS/storage integration, key gating API |
+| **Frontend** | UI / React Developer | Authority Admin Dashboard, Center Proctor Portal, countdown timers, in-browser PDF viewer |
+| **Integration & Pitch** | Pranav / Lead Integrator | Interface alignment, end-to-end testing, bug triage, pitch script & demo rehearsal |
 
 ---
 
@@ -33,6 +56,23 @@ ExamVault solves the problem of pre-exam paper leaks, unauthorized early access,
 
 ---
 
+## 📁 Repository Structure
+
+```
+ExamVault/
+├── contracts/             # Solidity smart contracts (ExamVault.sol)
+├── backend/               # Express REST API, encryption & key-wrapping services
+├── frontend/              # Vite + React web application
+├── scripts/               # End-to-end demo and server test scripts
+│   ├── demo.js            # Complete cryptographic lifecycle demo
+│   └── testServer.js      # REST API integration tests
+├── test/                  # Hardhat contract test suite (ExamVault.test.js)
+├── INTEGRATION_SPEC.md    # Multi-track integration & architecture specification
+└── hardhat.config.js      # Hardhat configuration
+```
+
+---
+
 ## ⚙️ Key Smart Contract Features (`ExamVault.sol`)
 
 1. **Role-Based Access Control (OpenZeppelin `AccessControl`)**:
@@ -56,12 +96,60 @@ ExamVault solves the problem of pre-exam paper leaks, unauthorized early access,
 
 ---
 
+## 💻 Testing & Verification
+
+### 1. Smart Contract Test Suite (Hardhat)
+
+```bash
+# Run contract unit & integration tests
+npx hardhat test
+```
+
+Expected result:
+```
+  ExamVault Smart Contract
+    Access Control & Initialization
+      ✔ Deployer should have ADMIN_ROLE and DEFAULT_ADMIN_ROLE
+      ✔ Admin can grant and revoke CENTER_ROLE and AUDITOR_ROLE
+      ✔ Non-admin cannot grant roles
+    Paper Registration
+      ✔ Admin can register a paper and emit PaperRegistered event
+      ✔ Cannot register the same paper ID twice
+      ✔ Cannot register with release time in the past or now
+      ✔ Non-admin cannot register a paper
+    Time-Locked Access Check & Logging
+      ✔ Early access: isReleaseAllowed returns false before release time
+      ✔ Early access: logAccess reverts when release time is in the future
+      ✔ After time warp: isReleaseAllowed returns true for authorized center
+      ✔ After time warp: logAccess succeeds and emits AccessLogged event
+      ✔ Unauthorized center cannot access even after release time
+      ✔ Non-CENTER_ROLE account cannot call logAccess even if authorized and unlocked
+    Integrity Verification
+      ✔ verifyHash returns true for matching hash
+      ✔ verifyHash returns false for tampered hash
+      ✔ verifyHash returns false for unregistered paper
+
+  16 passing (2s)
+```
+
+### 2. End-to-End Cryptographic Demo & Backend Tests
+
+```bash
+# Run cryptographic lifecycle demo (AES-256-GCM + RSA-OAEP + Audit Logging)
+npm run demo
+
+# Run backend HTTP endpoint tests
+npm run test:backend
+```
+
+---
+
 ## 🧪 Quick Test & Demo Guide in Remix IDE
 
 Follow these steps to demonstrate the full workflow to hackathon judges in **[Remix IDE](https://remix.ethereum.org)**:
 
 ### 1. Compile the Contract in Remix
-1. Create a file named `ExamVault.sol` under Remix `contracts/` directory and paste the contents of [`contracts/ExamVault.sol`](file:///c:/Antigravity/ExamVault/ExamVault/contracts/ExamVault.sol).
+1. Create a file named `ExamVault.sol` under Remix `contracts/` directory and paste the contents of `contracts/ExamVault.sol`.
 2. In the **Solidity Compiler** tab:
    - Compiler Version: `0.8.20`
    - Enable Optimization (optional, recommended 200 runs)
@@ -138,38 +226,12 @@ Follow these steps to demonstrate the full workflow to hackathon judges in **[Re
 
 ---
 
-## 💻 Local Hardhat Testing
+## 🔄 Git Workflow
 
-ExamVault comes with a full automated test suite:
-
-```bash
-# Run the complete test suite
-npx hardhat test
-```
-
-Result:
-```
-  ExamVault Smart Contract
-    Access Control & Initialization
-      ✔ Deployer should have ADMIN_ROLE and DEFAULT_ADMIN_ROLE
-      ✔ Admin can grant and revoke CENTER_ROLE and AUDITOR_ROLE
-      ✔ Non-admin cannot grant roles
-    Paper Registration
-      ✔ Admin can register a paper and emit PaperRegistered event
-      ✔ Cannot register the same paper ID twice
-      ✔ Cannot register with release time in the past or now
-      ✔ Non-admin cannot register a paper
-    Time-Locked Access Check & Logging
-      ✔ Early access: isReleaseAllowed returns false before release time
-      ✔ Early access: logAccess reverts when release time is in the future
-      ✔ After time warp: isReleaseAllowed returns true for authorized center
-      ✔ After time warp: logAccess succeeds and emits AccessLogged event
-      ✔ Unauthorized center cannot access even after release time
-      ✔ Non-CENTER_ROLE account cannot call logAccess even if authorized and unlocked
-    Integrity Verification
-      ✔ verifyHash returns true for matching hash
-      ✔ verifyHash returns false for tampered hash
-      ✔ verifyHash returns false for unregistered paper
-
-  16 passing (2s)
-```
+1. All development happens on feature/track branches branched off `dev`:
+   - `contract/<feature>`
+   - `backend/<feature>`
+   - `frontend/<feature>`
+   - `Pranav/integration`
+2. Never commit directly to `main`. Pull requests target `dev`.
+3. Check the check-in matrix in [`INTEGRATION_SPEC.md`](./INTEGRATION_SPEC.md#6-️-2-3-hour-track-check-in-matrix) every 2-3 hours to prevent schema drift!
