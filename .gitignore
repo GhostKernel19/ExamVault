@@ -3,6 +3,12 @@ node_modules/
 backend/node_modules/
 frontend/node_modules/
 
+# Smart Contract / Hardhat
+artifacts/
+cache/
+typechain/
+typechain-types/
+
 # Build artifacts
 frontend/dist/
 dist/
@@ -10,6 +16,8 @@ dist/
 # Environment variables
 .env
 backend/.env
+frontend/.env
+*.env.local
 
 # Uploads directory - store encrypted files locally during processing
 backend/uploads/*
@@ -24,3 +32,4 @@ uploads/*
 # OS files
 .DS_Store
 Thumbs.db
+

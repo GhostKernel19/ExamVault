@@ -2,14 +2,20 @@
   "name": "examvault",
   "version": "1.0.0",
   "description": "ExamVault - Blockchain-Anchored Secure Examination Paper Distribution System",
+  "main": "index.js",
   "scripts": {
     "start": "npm --prefix backend start",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "build:frontend": "npm --prefix frontend run build",
+    "test:contracts": "hardhat test",
     "test:backend": "node scripts/testServer.js",
     "demo": "node scripts/demo.js",
     "test": "node scripts/demo.js && node scripts/testServer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GhostKernel19/ExamVault.git"
   },
   "keywords": [
     "examvault",
@@ -22,6 +28,10 @@
   ],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GhostKernel19/ExamVault/issues"
+  },
+  "homepage": "https://github.com/GhostKernel19/ExamVault#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -31,6 +41,10 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.6.1",
+    "ethers": "^6.13.0",
+    "hardhat": "^2.29.1",
     "nodemon": "^3.1.4"
   }
 }
