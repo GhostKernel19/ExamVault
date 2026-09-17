@@ -367,7 +367,7 @@ export const AdminUpload = () => {
                     <span className="receipt-value mono">{txResult.transactionHash.substring(0, 16)}...</span>
                     {!txResult.isSimulated && (
                       <a
-                        href={`${SEPOLIA_CONFIG.blockExplorerUrls[0]}/tx/${txResult.transactionHash}`}
+                        href={`${SEPOLIA_CONFIG.blockExplorerUrls?.[0] || SEPOLIA_CONFIG.explorerUrl || 'https://sepolia.etherscan.io'}/tx/${txResult.transactionHash}`}
                         target="_blank"
                         rel="noreferrer"
                         className="external-link"

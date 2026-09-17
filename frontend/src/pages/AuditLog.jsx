@@ -237,7 +237,7 @@ export const AuditLog = () => {
                             </span>
                           ) : (
                             <a
-                              href={`${SEPOLIA_CONFIG.blockExplorerUrls[0]}/tx/${log.transactionHash}`}
+                              href={`${SEPOLIA_CONFIG.blockExplorerUrls?.[0] || SEPOLIA_CONFIG.explorerUrl || 'https://sepolia.etherscan.io'}/tx/${log.transactionHash}`}
                               target="_blank"
                               rel="noreferrer"
                               className="tx-hash-link"

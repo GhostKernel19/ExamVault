@@ -14,7 +14,8 @@ import {
   ExternalLinkIcon, 
   RefreshCwIcon,
   SearchIcon,
-  WalletIcon
+  WalletIcon,
+  FileUpIcon
 } from '../components/Icons';
 
 export const CenterAccess = () => {
@@ -103,8 +104,9 @@ export const CenterAccess = () => {
 
   // Copy key helper
   const handleCopyKey = () => {
-    if (releaseKeyResult?.key) {
-      navigator.clipboard.writeText(releaseKeyResult.key);
+    const keyToCopy = releaseKeyResult?.wrappedKey || releaseKeyResult?.key;
+    if (keyToCopy) {
+      navigator.clipboard.writeText(keyToCopy);
       setKeyCopied(true);
       setTimeout(() => setKeyCopied(false), 2500);
     }
@@ -348,12 +350,12 @@ export const CenterAccess = () => {
 
           <div className="key-display-box">
             <div className="key-header">
-              <span className="key-type-label">AES-256-GCM SESSION KEY</span>
-              <span className="key-expiry">Valid for 4 hours</span>
+              <span className="key-type-label">AES-256-GCM SESSION KEY (WRAPPED)</span>
+              <span className="key-expiry">Ready for Center Decryption</span>
             </div>
 
             <div className="key-value-row">
-              <code className="key-code">{releaseKeyResult.key}</code>
+              <code className="key-code">{releaseKeyResult.wrappedKey || releaseKeyResult.key}</code>
               <button
                 className={`copy-btn ${keyCopied ? 'copied' : ''}`}
                 onClick={handleCopyKey}
@@ -363,6 +365,24 @@ export const CenterAccess = () => {
               </button>
             </div>
           </div>
+
+          {/* Download Encrypted Paper Button */}
+          {releaseKeyResult.downloadUrl && (
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <a
+                href={releaseKeyResult.downloadUrl}
+                download
+                className="btn-primary"
+                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', borderRadius: 'var(--radius-sm)' }}
+              >
+                <FileUpIcon size={16} />
+                <span>Download Encrypted Paper (.enc)</span>
+              </a>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Hash: {releaseKeyResult.encryptedFileHash ? `${releaseKeyResult.encryptedFileHash.substring(0, 16)}...` : 'Verified on-chain'}
+              </span>
+            </div>
+          )}
 
           {/* On-Chain Access Log Receipt */}
           {accessTxResult && (
@@ -387,7 +407,7 @@ export const CenterAccess = () => {
 
               {!accessTxResult.isSimulated && (
                 <a
-                  href={`${SEPOLIA_CONFIG.blockExplorerUrls[0]}/tx/${accessTxResult.transactionHash}`}
+                  href={`${SEPOLIA_CONFIG.blockExplorerUrls?.[0] || SEPOLIA_CONFIG.explorerUrl || 'https://sepolia.etherscan.io'}/tx/${accessTxResult.transactionHash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="tx-external-link mt-3"

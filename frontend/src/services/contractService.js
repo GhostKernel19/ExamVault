@@ -81,17 +81,30 @@ export async function registerPaperOnContract(signerOrOptions, maybeOptions = {}
 /**
  * Checks whether paper release is allowed for the given center.
  */
-export async function checkIsReleaseAllowed(provider, paperId, centerAddress) {
+export async function checkIsReleaseAllowed(providerOrOptions, maybePaperId, maybeCenterAddress) {
+  let provider;
+  let paperId;
+  let centerAddress;
+
+  if (
+    providerOrOptions &&
+    typeof providerOrOptions === 'object' &&
+    ('providerOrSigner' in providerOrOptions || 'connectedAddress' in providerOrOptions)
+  ) {
+    provider = providerOrOptions.providerOrSigner || providerOrOptions.provider;
+    paperId = providerOrOptions.paperId;
+    centerAddress = providerOrOptions.connectedAddress || providerOrOptions.centerAddress;
+  } else {
+    provider = providerOrOptions;
+    paperId = maybePaperId;
+    centerAddress = maybeCenterAddress;
+  }
+
   if (provider && SEPOLIA_CONFIG.contractAddress && !SEPOLIA_CONFIG.contractAddress.startsWith('0x000')) {
     try {
       const contract = getContractInstance(provider);
-      const res = await contract.checkIsReleaseAllowed(paperId, centerAddress);
-      return {
-        allowed: res.allowed,
-        isAuthorized: res.isAuthorized,
-        isTimePassed: res.isTimePassed,
-        releaseTime: Number(res.releaseTime)
-      };
+      const allowed = await contract.isReleaseAllowed(paperId, centerAddress);
+      return { allowed, isAuthorized: allowed, isTimePassed: allowed, releaseTime: null };
     } catch (err) {
       // fallback to backend check
     }
@@ -109,14 +122,26 @@ export async function checkIsReleaseAllowed(provider, paperId, centerAddress) {
 /**
  * Logs an access attempt on the smart contract.
  */
-export async function logAccessOnContract(signer, paperId) {
+export async function logAccessOnContract(signerOrOptions, maybePaperId) {
+  let signer;
+  let paperId;
+
+  if (signerOrOptions && typeof signerOrOptions === 'object' && !signerOrOptions.getAddress && !signerOrOptions.sendTransaction) {
+    signer = signerOrOptions.signer;
+    paperId = signerOrOptions.paperId;
+  } else {
+    signer = signerOrOptions;
+    paperId = maybePaperId;
+  }
+
   if (signer) {
     try {
       const contract = getContractInstance(signer);
-      const tx = await contract.requestAccess(paperId);
+      const tx = await contract.logAccess(paperId);
       const receipt = await tx.wait();
       return {
         txHash: receipt.hash,
+        transactionHash: receipt.hash,
         blockNumber: receipt.blockNumber,
         isSimulated: false
       };
@@ -126,8 +151,10 @@ export async function logAccessOnContract(signer, paperId) {
   }
 
   await new Promise(r => setTimeout(r, 800));
+  const mockTxHash = `0x${Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}`;
   return {
-    txHash: `0x${Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')}`,
+    txHash: mockTxHash,
+    transactionHash: mockTxHash,
     blockNumber: 5418310 + Math.floor(Math.random() * 50),
     isSimulated: true
   };
@@ -136,7 +163,22 @@ export async function logAccessOnContract(signer, paperId) {
 /**
  * Queries access logs from smart contract events.
  */
-export async function queryAccessLogs(provider, paperFilter = '') {
+export async function queryAccessLogs(providerOrOptions, maybePaperFilter = '') {
+  let provider;
+  let paperFilter;
+
+  if (
+    providerOrOptions &&
+    typeof providerOrOptions === 'object' &&
+    ('providerOrSigner' in providerOrOptions || 'paperIdFilter' in providerOrOptions)
+  ) {
+    provider = providerOrOptions.providerOrSigner || providerOrOptions.provider;
+    paperFilter = providerOrOptions.paperIdFilter || '';
+  } else {
+    provider = providerOrOptions;
+    paperFilter = maybePaperFilter || '';
+  }
+
   const demoLogs = [
     {
       id: 'tx-log-1',
@@ -147,7 +189,9 @@ export async function queryAccessLogs(provider, paperFilter = '') {
       success: false,
       reason: 'TIMELOCK_STILL_ACTIVE',
       blockNumber: 5418250,
-      txHash: '0x8f3c4e1a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f'
+      txHash: '0x8f3c4e1a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f',
+      transactionHash: '0x8f3c4e1a5b6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f',
+      isSimulated: true
     },
     {
       id: 'tx-log-2',
@@ -158,9 +202,93 @@ export async function queryAccessLogs(provider, paperFilter = '') {
       success: true,
       reason: 'VERIFIED_ON_CHAIN',
       blockNumber: 5418298,
-      txHash: '0x4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e'
+      txHash: '0x4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e',
+      transactionHash: '0x4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e',
+      isSimulated: true
     }
   ];
 
-  return demoLogs;
+  if (!provider) {
+    return demoLogs;
+  }
+
+  try {
+    const contract = getContractInstance(provider);
+    const filter = (typeof paperFilter === 'string' ? paperFilter.trim() : '') || '';
+
+    const [registeredEvents, accessEvents] = await Promise.all([
+      contract.queryFilter(contract.filters.PaperRegistered()),
+      contract.queryFilter(contract.filters.AccessLogged())
+    ]);
+
+    const parsedLogs = [];
+
+    // Parse PaperRegistered events
+    for (const event of registeredEvents) {
+      const pId = event.args?.paperId ?? event.args?.[0] ?? '';
+      if (filter && pId !== filter) continue;
+
+      let eventTime = Math.floor(Date.now() / 1000);
+      try {
+        const block = await event.getBlock();
+        if (block?.timestamp) {
+          eventTime = block.timestamp;
+        }
+      } catch {
+        if (event.args?.releaseTime) {
+          eventTime = Number(event.args.releaseTime);
+        }
+      }
+
+      const hash = event.transactionHash || event.hash || '';
+      parsedLogs.push({
+        id: `${hash}-${event.index ?? event.logIndex ?? 0}`,
+        paperId: pId,
+        center: event.address || SEPOLIA_CONFIG.contractAddress,
+        action: 'PAPER_REGISTERED',
+        timestamp: eventTime,
+        success: true,
+        reason: 'REGISTERED_ON_CHAIN',
+        blockNumber: event.blockNumber,
+        txHash: hash,
+        transactionHash: hash,
+        isSimulated: false
+      });
+    }
+
+    // Parse AccessLogged events
+    for (const event of accessEvents) {
+      const pId = event.args?.paperId ?? event.args?.[0] ?? '';
+      if (filter && pId !== filter) continue;
+
+      const centerAddr = event.args?.center ?? event.args?.[1] ?? '';
+      const rawTime = event.args?.timestamp ?? event.args?.[2];
+      const eventTime = rawTime ? Number(rawTime) : Math.floor(Date.now() / 1000);
+      const isSuccess = Boolean(event.args?.success ?? event.args?.[3]);
+
+      const hash = event.transactionHash || event.hash || '';
+      parsedLogs.push({
+        id: `${hash}-${event.index ?? event.logIndex ?? 0}`,
+        paperId: pId,
+        center: centerAddr,
+        action: isSuccess ? 'PAPER_ACCESSED' : 'EARLY_ACCESS_ATTEMPT',
+        timestamp: eventTime,
+        success: isSuccess,
+        reason: isSuccess ? 'VERIFIED_ON_CHAIN' : 'ACCESS_NOT_ALLOWED',
+        blockNumber: event.blockNumber,
+        txHash: hash,
+        transactionHash: hash,
+        isSimulated: false
+      });
+    }
+
+    // Sort descending by block number, then timestamp
+    parsedLogs.sort((a, b) => (b.blockNumber - a.blockNumber) || (b.timestamp - a.timestamp));
+
+    return parsedLogs;
+  } catch (err) {
+    console.warn('Failed to query smart contract event logs, falling back to demo data:', err);
+    return demoLogs;
+  }
 }
+
