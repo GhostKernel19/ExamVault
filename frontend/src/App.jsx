@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { WalletProvider } from './context/WalletContext';
 import { Navbar } from './components/Navbar';
+import { Home } from './pages/Home';
 import { AdminUpload } from './pages/AdminUpload';
 import { CenterAccess } from './pages/CenterAccess';
 import { AuditLog } from './pages/AuditLog';
 import './App.css';
 
-function AppContent() {
-  const [activeTab, setActiveTab] = useState('upload'); // 'upload' | 'center' | 'audit'
-
+function AppLayout({ children }) {
   return (
     <div className="app-shell">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar />
       
       <main className="main-content">
-        {activeTab === 'upload' && <AdminUpload />}
-        {activeTab === 'center' && <CenterAccess />}
-        {activeTab === 'audit' && <AuditLog />}
+        {children}
       </main>
 
       <footer className="app-footer">
@@ -40,7 +38,20 @@ function AppContent() {
 export default function App() {
   return (
     <WalletProvider>
-      <AppContent />
+      <BrowserRouter>
+        <Routes>
+          {/* Landing Page Route */}
+          <Route path="/" element={<Home />} />
+
+          {/* Application Portal Routes */}
+          <Route path="/upload" element={<AppLayout><AdminUpload /></AppLayout>} />
+          <Route path="/center" element={<AppLayout><CenterAccess /></AppLayout>} />
+          <Route path="/audit" element={<AppLayout><AuditLog /></AppLayout>} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
     </WalletProvider>
   );
 }

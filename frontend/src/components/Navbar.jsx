@@ -1,9 +1,12 @@
 import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import { ShieldIcon, FileUpIcon, KeyIcon, TerminalIcon, WalletIcon } from './Icons';
 
-export const Navbar = ({ activeTab, setActiveTab }) => {
+export const Navbar = () => {
   const { account, isSepolia, demoMode, connectWallet, disconnectWallet, toggleDemoMode } = useWallet();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const shortenAddress = (addr) => {
     if (!addr) return '';
@@ -14,7 +17,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
     <header className="navbar-container">
       <div className="navbar-content">
         {/* Brand */}
-        <div className="navbar-brand" onClick={() => setActiveTab('upload')}>
+        <div className="navbar-brand" onClick={() => navigate('/')}>
           <div className="brand-icon-wrapper">
             <ShieldIcon size={24} />
           </div>
@@ -28,27 +31,34 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
 
         {/* Center Nav Tabs */}
         <nav className="navbar-tabs">
-          <button
-            className={`nav-tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
-            onClick={() => setActiveTab('upload')}
+          <Link
+            to="/"
+            className={`nav-tab-btn ${location.pathname === '/' ? 'active' : ''}`}
+          >
+            <ShieldIcon size={16} />
+            <span>Home</span>
+          </Link>
+          <Link
+            to="/upload"
+            className={`nav-tab-btn ${location.pathname === '/upload' ? 'active' : ''}`}
           >
             <FileUpIcon size={16} />
             <span>Authority Upload</span>
-          </button>
-          <button
-            className={`nav-tab-btn ${activeTab === 'center' ? 'active' : ''}`}
-            onClick={() => setActiveTab('center')}
+          </Link>
+          <Link
+            to="/center"
+            className={`nav-tab-btn ${location.pathname === '/center' ? 'active' : ''}`}
           >
             <KeyIcon size={16} />
             <span>Center Portal</span>
-          </button>
-          <button
-            className={`nav-tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
-            onClick={() => setActiveTab('audit')}
+          </Link>
+          <Link
+            to="/audit"
+            className={`nav-tab-btn ${location.pathname === '/audit' ? 'active' : ''}`}
           >
             <TerminalIcon size={16} />
             <span>Audit Trail</span>
-          </button>
+          </Link>
         </nav>
 
         {/* Right Controls: Network, Demo Mode & Wallet */}
