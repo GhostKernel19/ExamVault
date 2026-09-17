@@ -36,3 +36,4 @@ backend/papers.json
 # OS files
 .DS_Store
 Thumbs.db
+node_modules
